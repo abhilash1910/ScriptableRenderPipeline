@@ -122,6 +122,8 @@ All_{{ project.name }}:
   
   {% elsif platform.name == "OSX_Metal" %}
   #skip
+  {% elsif platform.name == "Linux" %}
+  #skip
   
   {% elsif platform.name == "Windows64" %}
   {% for win_api in win_apis %}

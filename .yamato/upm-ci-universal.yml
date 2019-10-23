@@ -198,7 +198,12 @@ All_{{ project.name }}:
     - .yamato/upm-ci-{{ project.name | downcase }}.yml#{{ project.name }}_{{ platform.name }}_{{ testplatform.name }}_trunk
   {% endif %}
   
+  {% elsif platform.name == "Linux" %}
+  #skip
+  
   {% elsif platform.name == "OSX_Metal"  and testplatform.name == "editmode" %}
+  
+
   
   {% elsif platform.name == "Windows64" %}
   {% for win_api in win_apis %}
