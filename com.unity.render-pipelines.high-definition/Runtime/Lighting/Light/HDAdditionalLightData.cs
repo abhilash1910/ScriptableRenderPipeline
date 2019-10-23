@@ -1315,7 +1315,10 @@ namespace UnityEngine.Rendering.HighDefinition
                     : 1;
         }
 
-        internal void RequestShadowMapRendering()
+        /// <summary>
+        /// Request shadow map rendering when Update Mode is set to On Demand.
+        /// </summary>
+        public void RequestShadowMapRendering()
         {
             if(shadowUpdateMode == ShadowUpdateMode.OnDemand)
                 m_ShadowMapRenderedSinceLastRequest = false;

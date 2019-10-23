@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added a range compression factor for Reflection Probe and Planar Reflection Probe to avoid saturation of colors.
 - Added path tracing support for directional, point and spot lights, as well as emission from Lit and Unlit.
 - Added non temporal version of SSAO.
+- Added more detailed ray tracing stats in the debug window
 - Added Disc area light (bake only)
 
 ### Fixed
@@ -102,6 +103,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed flickering issue happening when different volumes have shadow settings and multiple cameras are present. 
 - Fixed issue causing planar probes to disappear if there is no light in the scene.
 - Fixed a number of issues with the prefab isolation mode (Volumes leaking from the main scene and reflection not working properly)
+- Fixed an issue with fog volume component upgrade not working properly
+- Fixed Spot light Pyramid Shape has shadow artifacts on aspect ratio values lower than 1
 
 ### Changed
 - Color buffer pyramid is not allocated anymore if neither refraction nor distortion are enabled
@@ -116,6 +119,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Change default texture for detailmap to grey
 - Optimize Shadow RT load on Tile based architecture platforms. 
 - Improved quality of SSAO.
+- Moved RequestShadowMapRendering() back to public API.
+- Update HDRP DXR Wizard with an option to automatically clone the hdrp config package and setup raytracing to 1 in shaders file.
 - Simplified Light's type API regrouping the logic in one place (Check type in HDAdditionalLightData)
 
 ## [7.1.1] - 2019-09-05
