@@ -26,7 +26,6 @@ namespace UnityEngine.Rendering.HighDefinition
     class RayCountManager
     {
         
-#if ENABLE_RAYTRACING
         // Texture that holds the ray count per pixel
         RTHandle m_RayCountTexture = null;
 
@@ -238,6 +237,5 @@ namespace UnityEngine.Rendering.HighDefinition
                 }
             }
         }
-#endif
     }
 }

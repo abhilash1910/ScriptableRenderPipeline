@@ -92,11 +92,9 @@ namespace UnityEngine.Rendering.HighDefinition
 
             public uint screenSpaceShadowIndex = 0;
             // Raytracing
-#if ENABLE_RAYTRACING
             public bool countRays = false;
             public bool showRaysPerFrame = false;
             public Color raysPerFrameFontColor = Color.white;
-#endif
 
             public int debugCameraToFreeze = 0;
 
@@ -368,18 +366,17 @@ namespace UnityEngine.Rendering.HighDefinition
                 (data.fullScreenDebugMode == FullScreenDebugMode.PreRefractionColorPyramid || data.fullScreenDebugMode == FullScreenDebugMode.FinalColorPyramid || data.fullScreenDebugMode == FullScreenDebugMode.ScreenSpaceReflections || data.fullScreenDebugMode == FullScreenDebugMode.LightCluster || data.fullScreenDebugMode == FullScreenDebugMode.ScreenSpaceShadows || data.fullScreenDebugMode == FullScreenDebugMode.NanTracker || data.fullScreenDebugMode == FullScreenDebugMode.ColorLog) || data.fullScreenDebugMode == FullScreenDebugMode.RayTracedGlobalIllumination;
         }
 
-        void RegisterDisplayStatsDebug()
+        void RegisterDisplayStatsDebug(bool rayTracingSupported)
         {
             var list = new List<DebugUI.Widget>();
             list.Add(new DebugUI.Value { displayName = "Frame Rate (fps)", getter = () => 1f / Time.smoothDeltaTime, refreshRate = 1f / 30f });
             list.Add(new DebugUI.Value { displayName = "Frame Time (ms)", getter = () => Time.smoothDeltaTime * 1000f, refreshRate = 1f / 30f });
-#if ENABLE_RAYTRACING
-            list.Add(new DebugUI.BoolField { displayName = "Count Rays (MRays/Frame)", getter = () => data.countRays, setter = value => data.countRays = value, onValueChanged = RefreshDisplayStatsDebug });
-            if (data.countRays)
+            if (rayTracingSupported)
             {
-                list.Add(new DebugUI.Container
+                list.Add(new DebugUI.BoolField { displayName = "Count Rays (MRays/Frame)", getter = () => data.countRays, setter = value => data.countRays = value, onValueChanged = RefreshDisplayStatsDebug });
+                if (data.countRays)
                 {
-                    children =
+                    list.Add(new DebugUI.Container
                     {
                         new DebugUI.Value { displayName = "Ambient Occlusion", getter = () => ((float)(RenderPipelineManager.currentPipeline as HDRenderPipeline).GetRaysPerFrame(RayCountValues.AmbientOcclusion)) / 1e6f, refreshRate = 1f / 30f },
                         new DebugUI.Value { displayName = "Shadows Directional", getter = () => ((float)(RenderPipelineManager.currentPipeline as HDRenderPipeline).GetRaysPerFrame(RayCountValues.ShadowDirectional)) / 1e6f, refreshRate = 1f / 30f },
@@ -397,8 +394,9 @@ namespace UnityEngine.Rendering.HighDefinition
                         */
                     }
                 });
+
             }
-#endif
+               
             m_DebugDisplayStatsItems = list.ToArray();
             var panel = DebugManager.instance.GetPanel(k_PanelDisplayStats, true);
             panel.flags = DebugUI.Flags.RuntimeOnly;
@@ -439,7 +437,7 @@ namespace UnityEngine.Rendering.HighDefinition
         void RefreshDisplayStatsDebug<T>(DebugUI.Field<T> field, T value)
         {
             UnregisterDebugItems(k_PanelDisplayStats, m_DebugDisplayStatsItems);
-            RegisterDisplayStatsDebug();
+            RegisterDisplayStatsDebug((RenderPipelineManager.currentPipeline as HDRenderPipeline).rayTracingSupported);
         }
 
         // For now we just rebuild the lighting panel if needed, but ultimately it could be done in a better way
@@ -817,10 +815,10 @@ namespace UnityEngine.Rendering.HighDefinition
             panel.children.Add(m_DebugDecalsItems);
         }
 
-        public void RegisterDebug()
+        public void RegisterDebug(bool rayTracingSupported)
         {
             RegisterDecalsDebug();
-            RegisterDisplayStatsDebug();
+            RegisterDisplayStatsDebug(rayTracingSupported);
             RegisterMaterialDebug();
             RegisterLightingDebug();
             RegisterRenderingDebug();
